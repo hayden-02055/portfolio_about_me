@@ -1,0 +1,10 @@
+{
+  "docs": 3,
+  "chunks": 46,
+  "index_path": "app/infra/data/index",
+  "files": [
+    "about.md",
+    "experience.md",
+    "projects.md"
+  ]
+}

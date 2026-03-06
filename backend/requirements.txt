@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+anthropic
+numpy
+python-dotenv
