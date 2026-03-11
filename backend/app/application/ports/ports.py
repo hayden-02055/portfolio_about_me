@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-from typing import Iterator, Protocol
+from typing import Protocol
 
-from app.domain.models.entities import Chunk, Message, Thread
+from pydantic_ai.messages import ModelMessage
 
-
-class ChatLLMPort(Protocol):
-    def stream(self, messages: list[Message], system_prompt: str) -> Iterator[str]:
-        ...
-
-    def complete(self, messages: list[Message], system_prompt: str) -> str:
-        ...
+from app.domain.models.entities import Chunk
 
 
 class EmbedderPort(Protocol):
@@ -22,7 +16,7 @@ class VectorStorePort(Protocol):
     def upsert(self, chunks: list[Chunk], vectors: list[list[float]]) -> None:
         ...
 
-    def search(self, query_vector: list[float], top_k: int) -> list[Chunk]:
+    def search(self, query_vector: list[float], top_k: int, score_threshold: float = 0.0) -> list[Chunk]:
         ...
 
     def save(self, path: str) -> None:
@@ -41,8 +35,8 @@ class DocumentStorePort(Protocol):
 
 
 class CheckpointerPort(Protocol):
-    def get(self, thread_id: str) -> Thread | None:
+    def get(self, thread_id: str) -> list[ModelMessage]:
         ...
 
-    def put(self, thread_id: str, thread: Thread) -> None:
+    def put(self, thread_id: str, messages: list[ModelMessage]) -> None:
         ...

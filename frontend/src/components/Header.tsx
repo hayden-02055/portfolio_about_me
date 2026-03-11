@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const navItems = [
   { href: "#about", label: "About" },
@@ -49,6 +50,14 @@ export default function Header() {
                 </a>
               </li>
             ))}
+            <li>
+              <Link
+                href="/chat"
+                className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-medium"
+              >
+                Chat
+              </Link>
+            </li>
           </ul>
 
           <button
@@ -94,6 +103,15 @@ export default function Header() {
                 </a>
               </li>
             ))}
+            <li>
+              <Link
+                href="/chat"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-gray-600 hover:text-gray-900 transition-colors font-medium"
+              >
+                Chat
+              </Link>
+            </li>
           </ul>
         )}
       </nav>

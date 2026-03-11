@@ -3,3 +3,5 @@ uvicorn
 anthropic
 numpy
 python-dotenv
+pydantic-ai[anthropic]
+sentence-transformers

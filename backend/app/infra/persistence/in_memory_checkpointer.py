@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from app.domain.models.entities import Thread
+from pydantic_ai.messages import ModelMessage
 
 
 class InMemoryCheckpointer:
     def __init__(self) -> None:
-        self._threads: dict[str, Thread] = {}
+        self._store: dict[str, list[ModelMessage]] = {}
 
-    def get(self, thread_id: str) -> Thread | None:
-        return self._threads.get(thread_id)
+    def get(self, thread_id: str) -> list[ModelMessage]:
+        return self._store.get(thread_id, [])
 
-    def put(self, thread_id: str, thread: Thread) -> None:
-        self._threads[thread_id] = thread
+    def put(self, thread_id: str, messages: list[ModelMessage]) -> None:
+        self._store[thread_id] = messages

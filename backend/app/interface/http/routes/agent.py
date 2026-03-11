@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterator
+from typing import AsyncIterator
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -37,12 +37,12 @@ def build_index(req: BuildIndexRequest, request: Request) -> dict:
 
 
 @router.post("/chat/stream")
-def chat_stream(req: ChatStreamRequest, request: Request) -> StreamingResponse:
+async def chat_stream(req: ChatStreamRequest, request: Request) -> StreamingResponse:
     container = request.app.state.container
 
-    def gen() -> Iterator[str]:
+    async def gen() -> AsyncIterator[str]:
         try:
-            for event in container.chat_stream_usecase.execute(
+            async for event in container.chat_stream_usecase.execute(
                 thread_id=req.thread_id,
                 user_message=req.message,
             ):
@@ -52,4 +52,11 @@ def chat_stream(req: ChatStreamRequest, request: Request) -> StreamingResponse:
         except Exception:
             yield format_sse("error", {"message": "Stream failed due to server error."})
 
-    return StreamingResponse(gen(), media_type="text/event-stream")
+    return StreamingResponse(
+        gen(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )

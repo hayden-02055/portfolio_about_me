@@ -18,7 +18,7 @@ class LocalVectorStore:
         self._chunks = chunks
         self._vectors = np.array(vectors, dtype=np.float32)
 
-    def search(self, query_vector: list[float], top_k: int) -> list[Chunk]:
+    def search(self, query_vector: list[float], top_k: int, score_threshold: float = 0.0) -> list[Chunk]:
         if self._vectors is None or not self._chunks:
             return []
 
@@ -28,8 +28,11 @@ class LocalVectorStore:
         idxs = np.argsort(scores)[::-1][:top_k]
         result: list[Chunk] = []
         for idx in idxs:
+            score = float(scores[int(idx)])
+            if score < score_threshold:
+                break
             c = self._chunks[int(idx)]
-            c.score = float(scores[int(idx)])
+            c.score = score
             result.append(c)
         return result
 

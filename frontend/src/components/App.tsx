@@ -4,7 +4,6 @@ import Decisions from "./Decisions";
 import Experience from "./Experience";
 import Footer from "./Footer";
 import Future from "./Future";
-import ChatSection from "./ChatSection";
 import Header from "./Header";
 import Hero from "./Hero";
 import Learnings from "./Learnings";
@@ -25,7 +24,6 @@ export default function App() {
         <Decisions />
         <Learnings />
         <Future />
-        <ChatSection />
       </main>
       <Footer />
     </div>
