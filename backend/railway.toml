@@ -1,5 +1,6 @@
 [build]
 builder = "nixpacks"
+buildCommand = "python -c \"from sentence_transformers import SentenceTransformer; SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')\""
 
 [deploy]
 startCommand = "bash start.sh"
