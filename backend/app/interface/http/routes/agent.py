@@ -13,13 +13,16 @@ router = APIRouter()
 
 
 @router.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+def health(request: Request) -> dict[str, str]:
+    ready = request.app.state.container is not None
+    return {"status": "ok", "ready": str(ready).lower()}
 
 
 @router.post("/index/build")
 def build_index(req: BuildIndexRequest, request: Request) -> dict:
     container = request.app.state.container
+    if container is None:
+        raise HTTPException(status_code=503, detail="Service is still initializing.")
     settings = container.settings
     try:
         result = container.build_index_usecase.execute(
@@ -39,6 +42,8 @@ def build_index(req: BuildIndexRequest, request: Request) -> dict:
 @router.post("/chat/stream")
 async def chat_stream(req: ChatStreamRequest, request: Request) -> StreamingResponse:
     container = request.app.state.container
+    if container is None:
+        raise HTTPException(status_code=503, detail="Service is still initializing.")
 
     async def gen() -> AsyncIterator[str]:
         try:
