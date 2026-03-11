@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import os
+import threading
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,8 +24,35 @@ def _get_allowed_origins() -> list[str]:
     return origins
 
 
+def _init_container(app: FastAPI) -> None:
+    """Build container and index in a background thread."""
+    try:
+        container = build_container()
+        settings = container.settings
+        container.build_index_usecase.execute(
+            md_dir=settings.md_dir,
+            index_dir=settings.index_dir,
+            chunk_size=settings.chunk_size,
+            chunk_overlap=settings.chunk_overlap,
+            embed_batch_size=settings.embed_batch_size,
+        )
+        app.state.container = container
+        print("[startup] Container and index ready.")
+    except Exception as e:
+        print(f"[startup] Initialization failed: {e}")
+        app.state.container = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    app.state.container = None
+    thread = threading.Thread(target=_init_container, args=(app,), daemon=True)
+    thread.start()
+    yield
+
+
 def create_app() -> FastAPI:
-    app = FastAPI(title="Portfolio AI Agent API", version="0.1.0")
+    app = FastAPI(title="Portfolio AI Agent API", version="0.1.0", lifespan=lifespan)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_get_allowed_origins(),
@@ -30,7 +60,6 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.state.container = build_container()
     app.include_router(agent_router)
 
     @app.get("/", include_in_schema=False)
