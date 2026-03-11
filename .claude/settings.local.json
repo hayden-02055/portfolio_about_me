@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/haewonpark/Desktop/Programing/portfoli\\(including AI agent\\) /backend/**)"
+    ]
+  }
+}
