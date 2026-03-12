@@ -29,7 +29,7 @@ def get_settings() -> Settings:
         md_dir=os.getenv("MD_DIR", "app/infra/data/md"),
         index_dir=os.getenv("INDEX_DIR", "app/infra/data/index"),
         top_k=int(os.getenv("TOP_K", "5")),
-        score_threshold=float(os.getenv("SCORE_THRESHOLD", "0.3")),
+        score_threshold=float(os.getenv("SCORE_THRESHOLD", "0.2")),
         chunk_size=int(os.getenv("CHUNK_SIZE", "1200")),
         chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "200")),
         chat_max_tokens=int(os.getenv("CHAT_MAX_TOKENS", "1024")),
