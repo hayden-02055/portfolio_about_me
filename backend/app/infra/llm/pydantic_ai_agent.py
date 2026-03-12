@@ -22,7 +22,7 @@ class RagDeps:
 def build_agent(model_name: str, max_tokens: int, api_key: str) -> Agent[RagDeps, str]:
     agent: Agent[RagDeps, str] = Agent(
         AnthropicModel(model_name, provider=AnthropicProvider(api_key=api_key)),
-        result_type=str,
+        output_type=str,
         model_settings={"max_tokens": max_tokens},
     )
 
